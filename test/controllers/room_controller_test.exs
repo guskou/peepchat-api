@@ -89,27 +89,27 @@ defmodule Peepchat.RoomControllerTest do
     end
   end
 
-  test "creates and renders resource when data is valid", %{conn: conn} do
-    conn = post conn, room_path(conn, :create), room: @valid_attrs
+  test "creates and renders resource when data is valid", %{conn: conn, user: _user} do
+    conn = post conn, room_path(conn, :create), data: %{type: "rooms", attributes: @valid_attrs, relationships: %{}}
     assert json_response(conn, 201)["data"]["id"]
     assert Repo.get_by(Room, @valid_attrs)
   end
 
-  test "does not create resource and renders errors when data is invalid", %{conn: conn} do
-    conn = post conn, room_path(conn, :create), room: @invalid_attrs
+  test "does not create resource and renders errors when data is invalid", %{conn: conn, user: _user} do
+    conn = post conn, room_path(conn, :create), data: %{type: "rooms", attributes: @invalid_attrs, relationships: %{}}
     assert json_response(conn, 422)["errors"] != %{}
   end
 
   test "updates and renders chosen resource when data is valid", %{conn: conn, user: user} do
     room = Repo.insert! %Room{owner_id: user.id, name: "A room"}
-    conn = put conn, room_path(conn, :update, room), room: @valid_attrs
+    conn = put conn, room_path(conn, :update, room), data: %{id: room.id, type: "rooms", attributes: @valid_attrs}
     assert json_response(conn, 200)["data"]["id"]
     assert Repo.get_by(Room, @valid_attrs)
   end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn, user: user} do
     room = Repo.insert! %Room{owner_id: user.id}
-    conn = put conn, room_path(conn, :update, room), room: @invalid_attrs
+    conn = put conn, room_path(conn, :update, room), data: %{id: room.id, type: "rooms", attributes: @invalid_attrs}
     assert json_response(conn, 422)["errors"] != %{}
   end
 

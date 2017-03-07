@@ -24,7 +24,7 @@ defmodule Peepchat.RoomController do
     render(conn, "index.json-api", data: rooms)
   end
 
-  def create(conn, %{"room" => room_params}) do
+  def create(conn, %{"data" => %{"type" => "rooms", "attributes" => room_params, "relationships" => _}}) do
     # Get the current user
     current_user = Guardian.Plug.current_resource(conn)
     # Build the current user's ID into the changeset
@@ -48,7 +48,7 @@ defmodule Peepchat.RoomController do
     render(conn, "show.json-api", data: room)
   end
 
-  def update(conn, %{"id" => id, "room" => room_params}) do
+  def update(conn, %{"id" => id, "data" => %{"id" => _, "type" => "rooms", "attributes" => room_params}}) do
     current_user = Guardian.Plug.current_resource(conn)
 
     #room = Repo.get!(Room, id)
